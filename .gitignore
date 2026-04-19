@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.class
+.venv/
+.env
+.uv
+
+# Node
+node_modules/
+dist/
+dist-ssr
+*.local
+
+# Docker
+.dockerignore
+
+# OS
+.DS_Store
