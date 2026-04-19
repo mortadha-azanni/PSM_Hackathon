@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *.class
 .venv/
+venv/
 .env
 .uv
 
@@ -17,3 +18,8 @@ dist-ssr
 
 # OS
 .DS_Store
+
+# Data & Models
+*.sqlite
+*.pkl
+backend/data/raw/*.csv
