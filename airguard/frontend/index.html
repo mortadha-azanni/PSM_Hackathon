@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AirGuard TN — Monastir & Mahdia NO₂ Forecast</title>
+
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<!-- Leaflet.heat -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js"></script>
+<!-- Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+
+  /* ── Top bar ── */
+  #topbar{background:#161b22;border-bottom:1px solid #30363d;padding:10px 18px;display:flex;align-items:center;gap:14px;flex-shrink:0;z-index:1000}
+  #topbar h1{font-size:16px;font-weight:600;color:#58a6ff;white-space:nowrap}
+  #topbar h1 span{color:#7ee787}
+  .city-btn{padding:5px 14px;border-radius:20px;border:1px solid #30363d;background:transparent;color:#8b949e;cursor:pointer;font-size:13px;transition:all .2s}
+  .city-btn.active{background:#1f6feb;border-color:#1f6feb;color:#fff}
+  .horizon-btn{padding:4px 12px;border-radius:16px;border:1px solid #30363d;background:transparent;color:#8b949e;cursor:pointer;font-size:12px;transition:all .2s}
+  .horizon-btn.active{background:#238636;border-color:#238636;color:#fff}
+  #topbar .sep{width:1px;height:20px;background:#30363d;flex-shrink:0}
+  #replay-btn{margin-left:auto;padding:5px 14px;border-radius:16px;border:1px solid #d29922;background:transparent;color:#d29922;cursor:pointer;font-size:12px}
+  #replay-btn.active{background:#d29922;color:#000}
+
+  /* ── Main layout ── */
+  #main{display:flex;flex:1;overflow:hidden}
+  #map{flex:1;z-index:1}
+
+  /* ── Right panel ── */
+  #panel{width:320px;background:#161b22;border-left:1px solid #30363d;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
+  .panel-section{border-bottom:1px solid #21262d;padding:14px}
+  .panel-section h2{font-size:12px;font-weight:600;color:#8b949e;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+
+  /* Danger badge */
+  #danger-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:8px;font-weight:600;font-size:18px;margin-bottom:8px}
+  .ds-safe     {background:#0d1f0d;color:#3fb950;border:1px solid #238636}
+  .ds-moderate {background:#1f1a00;color:#e3b341;border:1px solid #d29922}
+  .ds-elevated {background:#2d1800;color:#f0883e;border:1px solid #bd561d}
+  .ds-high     {background:#2d0000;color:#f85149;border:1px solid #da3633}
+  .ds-critical {background:#1a0026;color:#bc8cff;border:1px solid #8957e5}
+
+  /* Weather flags */
+  #flags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+  .flag{padding:3px 8px;border-radius:12px;font-size:11px;font-weight:500}
+  .flag-off {background:#21262d;color:#484f58}
+  .flag-on  {background:#2d1800;color:#f0883e;border:1px solid #bd561d}
+  .flag-inv {background:#2d0000;color:#f85149;border:1px solid #da3633}
+  .flag-ok  {background:#0d1f0d;color:#3fb950;border:1px solid #238636}
+
+  /* Weather stats */
+  .wx-row{display:flex;justify-content:space-between;font-size:12px;margin:3px 0}
+  .wx-label{color:#8b949e}
+  .wx-val{color:#e6edf3;font-weight:500}
+
+  /* Chart */
+  #chartWrap{position:relative;height:140px}
+
+  /* Alert cards */
+  #alert-list{max-height:200px;overflow-y:auto}
+  .alert-card{background:#21262d;border-radius:6px;padding:8px 10px;margin-bottom:6px;border-left:3px solid #da3633}
+  .alert-card.advisory{border-left-color:#d29922}
+  .alert-card.warning  {border-left-color:#f0883e}
+  .alert-card.emergency{border-left-color:#8957e5}
+  .alert-card .a-level{font-size:10px;font-weight:600;text-transform:uppercase;color:#8b949e}
+  .alert-card .a-zone {font-size:12px;font-weight:600;margin:2px 0}
+  .alert-card .a-body {font-size:11px;color:#8b949e}
+
+  /* Green buffers */
+  .buf-row{display:flex;align-items:center;gap:8px;padding:5px 0;cursor:pointer;border-radius:4px}
+  .buf-row:hover{background:#21262d}
+  .buf-score{width:32px;height:32px;border-radius:50%;background:#0d2d0d;border:2px solid #238636;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#3fb950;flex-shrink:0}
+  .buf-info .bt{font-size:12px;font-weight:500}
+  .buf-info .bs{font-size:11px;color:#8b949e}
+
+  /* Compliance bar */
+  #compliance-bar{background:#0d1117;border-top:1px solid #30363d;padding:8px 18px;display:flex;gap:16px;flex-shrink:0;flex-wrap:wrap}
+  .compliance-item{display:flex;align-items:center;gap:6px;font-size:11px}
+  .comp-dot{width:8px;height:8px;border-radius:50%}
+  .comp-ok   {background:#3fb950}
+  .comp-warn {background:#d29922}
+  .comp-breach{background:#f85149}
+
+  /* Replay slider */
+  #replay-bar{display:none;background:#161b22;border-top:1px solid #30363d;padding:8px 18px;align-items:center;gap:12px;flex-shrink:0}
+  #replay-bar.visible{display:flex}
+  #replay-bar label{font-size:12px;color:#8b949e;white-space:nowrap}
+  #replay-slider{flex:1;accent-color:#d29922}
+  #replay-date{font-size:12px;font-weight:600;color:#d29922;min-width:100px}
+  #replay-play{padding:4px 12px;border-radius:14px;border:1px solid #d29922;background:transparent;color:#d29922;cursor:pointer;font-size:12px}
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div id="topbar">
+  <h1>AirGuard <span>TN</span></h1>
+  <div class="sep"></div>
+  <button class="city-btn active" onclick="selectCity('monastir')">Monastir</button>
+  <button class="city-btn" onclick="selectCity('mahdia')">Mahdia</button>
+  <div class="sep"></div>
+  <button class="horizon-btn active" onclick="selectHorizon(24)">+24h</button>
+  <button class="horizon-btn" onclick="selectHorizon(48)">+48h</button>
+  <button class="horizon-btn" onclick="selectHorizon(72)">+72h</button>
+  <button id="replay-btn" onclick="toggleReplay()">▶ Episode replay</button>
+</div>
+
+<!-- Main -->
+<div id="main">
+  <div id="map"></div>
+
+  <div id="panel">
+    <!-- Danger score -->
+    <div class="panel-section">
+      <h2>Danger score</h2>
+      <div id="danger-badge" class="ds-safe">
+        <span id="ds-num">–</span>
+        <span id="ds-label" style="font-size:13px;font-weight:400">Loading…</span>
+      </div>
+      <div id="flags">
+        <span class="flag flag-off" id="flag-inv">⬆ Inversion</span>
+        <span class="flag flag-off" id="flag-stag">🌫 Stagnation</span>
+        <span class="flag flag-off" id="flag-siro">🌬 Sirocco</span>
+        <span class="flag flag-off" id="flag-rain">🌧 Rain</span>
+      </div>
+    </div>
+
+    <!-- Weather -->
+    <div class="panel-section">
+      <h2>Atmospheric conditions</h2>
+      <div class="wx-row"><span class="wx-label">Wind speed</span><span class="wx-val" id="wx-wind">–</span></div>
+      <div class="wx-row"><span class="wx-label">Wind direction</span><span class="wx-val" id="wx-wdir">–</span></div>
+      <div class="wx-row"><span class="wx-label">Boundary layer</span><span class="wx-val" id="wx-blh">–</span></div>
+      <div class="wx-row"><span class="wx-label">Forecast NO₂</span><span class="wx-val" id="wx-no2">–</span></div>
+    </div>
+
+    <!-- Forecast chart -->
+    <div class="panel-section">
+      <h2>72-hour NO₂ trend</h2>
+      <div id="chartWrap"><canvas id="forecastChart"></canvas></div>
+    </div>
+
+    <!-- Alerts -->
+    <div class="panel-section">
+      <h2>Notification center</h2>
+      <div id="alert-list"><p style="font-size:12px;color:#484f58">No active alerts</p></div>
+    </div>
+
+    <!-- Green buffers -->
+    <div class="panel-section">
+      <h2>Green buffer advisor</h2>
+      <div id="buffer-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Compliance bar -->
+<div id="compliance-bar">
+  <span style="font-size:11px;color:#8b949e;font-weight:600">Compliance:</span>
+  <div class="compliance-item"><div class="comp-dot comp-ok" id="c-who"></div><span>WHO AQG 25 μg/m³</span></div>
+  <div class="compliance-item"><div class="comp-dot comp-ok" id="c-eu"></div><span>EU 40 μg/m³</span></div>
+  <div class="compliance-item"><div class="comp-dot comp-ok" id="c-tn"></div><span>Tunisia Decree 2018-447</span></div>
+  <span id="no2-display" style="margin-left:auto;font-size:12px;font-weight:600;color:#58a6ff">–</span>
+</div>
+
+<!-- Episode replay bar -->
+<div id="replay-bar">
+  <label>Replay:</label>
+  <input type="range" id="replay-slider" min="0" max="0" value="0" oninput="onReplaySlide(this.value)"/>
+  <span id="replay-date">–</span>
+  <button id="replay-play" onclick="playReplay()">▶ Play</button>
+</div>
+
+<script>
+// ── Config ────────────────────────────────────────────────────────────────
+const API = 'http://localhost:8000/api/v1';
+const POLL_MS = 30000;  // 30 s polling interval
+
+let activeCity = 'monastir';
+let activeHorizon = 24;
+let map, heatLayer, redZoneLayer, bufferLayer;
+let forecastChart;
+let replayData = null, replayIdx = 0, replayTimer = null;
+
+const CITY_CENTERS = {
+  monastir: [35.7643, 10.8113],
+  mahdia:   [35.5047, 11.0622],
+};
+
+// ── Map init ──────────────────────────────────────────────────────────────
+map = L.map('map', { zoomControl: true }).setView([35.65, 10.95], 10);
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '© OpenStreetMap © CartoDB',
+  maxZoom: 18,
+}).addTo(map);
+
+heatLayer   = L.heatLayer([], { radius: 35, blur: 25, maxZoom: 13,
+  gradient: {0: '#0000ff', 0.3: '#00ffff', 0.6: '#ffff00', 1.0: '#ff0000'}
+}).addTo(map);
+
+redZoneLayer  = L.layerGroup().addTo(map);
+bufferLayer   = L.layerGroup().addTo(map);
+
+// ── Chart init ────────────────────────────────────────────────────────────
+const ctx = document.getElementById('forecastChart').getContext('2d');
+forecastChart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: ['+24h', '+48h', '+72h'],
+    datasets: [
+      { label: 'NO₂ (μg/m³)', data: [], borderColor: '#58a6ff',
+        backgroundColor: 'rgba(88,166,255,0.1)', fill: true,
+        tension: 0.4, pointRadius: 4 },
+      { label: 'CI upper', data: [], borderColor: 'rgba(248,81,73,0.4)',
+        borderDash: [4,4], pointRadius: 0, fill: '+1' },
+      { label: 'CI lower', data: [], borderColor: 'rgba(248,81,73,0.4)',
+        borderDash: [4,4], pointRadius: 0,
+        backgroundColor: 'rgba(248,81,73,0.06)', fill: false },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: '#8b949e', font: { size: 11 } }, grid: { color: '#21262d' } },
+      y: { ticks: { color: '#8b949e', font: { size: 11 } }, grid: { color: '#21262d' },
+           title: { display: true, text: 'μg/m³', color: '#8b949e', font: { size: 10 } } }
+    }
+  }
+});
+
+// ── City / horizon selection ──────────────────────────────────────────────
+function selectCity(city) {
+  activeCity = city;
+  document.querySelectorAll('.city-btn').forEach(b =>
+    b.classList.toggle('active', b.textContent.toLowerCase() === city));
+  map.flyTo(CITY_CENTERS[city], 12, { duration: 1 });
+  fetchAll();
+  fetchBuffers();
+}
+
+function selectHorizon(h) {
+  activeHorizon = h;
+  document.querySelectorAll('.horizon-btn').forEach(b =>
+    b.classList.toggle('active', b.textContent === `+${h}h`));
+  fetchForecast(activeHorizon);
+}
+
+// ── Main data fetch ───────────────────────────────────────────────────────
+async function fetchAll() {
+  await Promise.all([
+    fetchForecast(24),
+    fetchForecast(48),
+    fetchForecast(72),
+    fetchAlerts(),
+  ]);
+}
+
+async function fetchForecast(horizon) {
+  try {
+    const r = await fetch(`${API}/forecast?city=${activeCity}&horizon=${horizon}`);
+    if (!r.ok) return;
+    const d = await r.json();
+    if (horizon === activeHorizon) updateMap(d);
+    updateChart(horizon, d);
+    updateCompliance(d);
+  } catch (e) { console.warn('Forecast fetch failed', e); }
+}
+
+function updateMap(d) {
+  // Heatmap
+  const pts = d.grid_cells.map(c => [c.lat, c.lon, c.no2_predicted / 80]);
+  heatLayer.setLatLngs(pts);
+
+  // Danger score badge
+  const maxDS = Math.max(...d.grid_cells.map(c => c.danger_score));
+  updateDangerBadge(maxDS);
+
+  // Red zone polygons
+  redZoneLayer.clearLayers();
+  d.grid_cells.filter(c => c.zone_type === 'red' || c.zone_type === 'orange').forEach(c => {
+    const sz = 0.008;
+    const bounds = [[c.lat-sz, c.lon-sz],[c.lat+sz, c.lon+sz]];
+    const color = c.zone_type === 'red' ? '#f85149' : '#f0883e';
+    L.rectangle(bounds, {
+      color, weight: 1, fillColor: color, fillOpacity: 0.18,
+    }).bindPopup(`
+      <b>Zone</b> ${c.lat.toFixed(3)}, ${c.lon.toFixed(3)}<br/>
+      <b>NO₂</b> ${c.no2_predicted} μg/m³ (±${(c.ci_high - c.no2_predicted).toFixed(1)})<br/>
+      <b>Danger score</b> ${c.danger_score}/10<br/>
+      <b>Inversion</b> ${c.inversion_flag ? '⚠ Yes' : 'No'}<br/>
+      <b>Stagnation</b> ${c.stagnation_flag ? '⚠ Yes' : 'No'}
+    `).addTo(redZoneLayer);
+  });
+
+  // Weather flags
+  const f = d.flags || {};
+  setFlag('flag-inv',  f.inversion,  'flag-inv');
+  setFlag('flag-stag', f.stagnation, 'flag-on');
+  setFlag('flag-siro', f.sirocco,    'flag-on');
+  setFlag('flag-rain', f.rain,       'flag-ok');
+
+  // Weather stats
+  const wx = d.weather_summary || {};
+  setText('wx-wind',  wx.wind_speed_ms != null ? `${wx.wind_speed_ms} m/s` : '–');
+  setText('wx-wdir',  wx.wind_direction_deg != null ? `${wx.wind_direction_deg}°` : '–');
+  setText('wx-blh',   wx.boundary_layer_height_m != null ? `${wx.boundary_layer_height_m} m` : '–');
+  setText('wx-no2',   `${d.no2_mean_pred} μg/m³`);
+}
+
+const chartCache = {};
+function updateChart(horizon, d) {
+  chartCache[horizon] = {
+    pred: d.no2_mean_pred,
+    ci_h: d.ci_high,
+    ci_l: d.ci_low,
+  };
+  const h24 = chartCache[24] || {};
+  const h48 = chartCache[48] || {};
+  const h72 = chartCache[72] || {};
+  forecastChart.data.datasets[0].data = [h24.pred, h48.pred, h72.pred];
+  forecastChart.data.datasets[1].data = [h24.ci_h, h48.ci_h, h72.ci_h];
+  forecastChart.data.datasets[2].data = [h24.ci_l, h48.ci_l, h72.ci_l];
+  forecastChart.update('none');
+}
+
+function updateCompliance(d) {
+  const no2 = d.no2_mean_pred;
+  setText('no2-display', `Forecast: ${no2} μg/m³`);
+  dotColor('c-who', no2 > 25  ? 'breach' : 'ok');
+  dotColor('c-eu',  no2 > 40  ? 'breach' : no2 > 25 ? 'warn' : 'ok');
+  dotColor('c-tn',  no2 > 40  ? 'breach' : no2 > 25 ? 'warn' : 'ok');
+}
+
+async function fetchAlerts() {
+  try {
+    const r = await fetch(`${API}/alerts/recent?limit=5`);
+    if (!r.ok) return;
+    const d = await r.json();
+    renderAlerts(d.alerts || []);
+  } catch (e) {}
+}
+
+async function fetchBuffers() {
+  try {
+    const r = await fetch(`${API}/green-buffers?city=${activeCity}`);
+    if (!r.ok) return;
+    const d = await r.json();
+    renderBuffers(d.recommendations || []);
+  } catch (e) {}
+}
+
+// ── Render helpers ────────────────────────────────────────────────────────
+const DS_CLASSES = ['ds-safe','ds-safe','ds-moderate','ds-moderate',
+  'ds-elevated','ds-elevated','ds-high','ds-high','ds-critical','ds-critical'];
+const DS_LABELS  = ['Safe','Safe','Moderate','Moderate',
+  'Elevated','Elevated','High','High','Critical','Critical'];
+
+function updateDangerBadge(ds) {
+  const el = document.getElementById('danger-badge');
+  el.className = 'danger-badge ' + (DS_CLASSES[ds-1] || 'ds-safe');
+  setText('ds-num',   ds + '/10');
+  setText('ds-label', DS_LABELS[ds-1] || 'Safe');
+}
+
+function renderAlerts(alerts) {
+  const el = document.getElementById('alert-list');
+  if (!alerts.length) { el.innerHTML = '<p style="font-size:12px;color:#484f58">No active alerts</p>'; return; }
+  el.innerHTML = alerts.map(a => `
+    <div class="alert-card ${(a.alert_level||'').toLowerCase()}">
+      <div class="a-level">${a.alert_level || ''}</div>
+      <div class="a-zone">${(a.city||'').toUpperCase()} · Score ${a.last_score||a.danger_score||'–'}/10</div>
+      <div class="a-body">${a.last_sent ? new Date(a.last_sent).toLocaleString() : ''}</div>
+    </div>`).join('');
+}
+
+function renderBuffers(bufs) {
+  const el = document.getElementById('buffer-list');
+  bufferLayer.clearLayers();
+  if (!bufs.length) { el.innerHTML = '<p style="font-size:12px;color:#484f58">No data</p>'; return; }
+  el.innerHTML = bufs.slice(0,5).map((b,i) => `
+    <div class="buf-row" onclick="flyToBuffer(${b.lat},${b.lon})">
+      <div class="buf-score">${b.buffer_score}</div>
+      <div class="buf-info">
+        <div class="bt">${b.buffer_type.replace(/_/g,' ')}</div>
+        <div class="bs">${b.recommended_species.join(', ')} · −${b.estimated_no2_reduction_pct}% NO₂</div>
+      </div>
+    </div>`).join('');
+
+  const greenIcon = L.divIcon({
+    html: '<div style="width:10px;height:10px;border-radius:50%;background:#3fb950;border:2px solid #238636;box-shadow:0 0 6px #3fb950"></div>',
+    className:'', iconAnchor:[5,5]
+  });
+  bufs.forEach(b => {
+    L.marker([b.lat, b.lon], { icon: greenIcon })
+      .bindPopup(`<b>Green buffer</b><br/>${b.buffer_type.replace(/_/g,' ')}<br/>${b.recommended_species.join(', ')}<br/>Score: ${b.buffer_score}/100`)
+      .addTo(bufferLayer);
+  });
+}
+
+function flyToBuffer(lat, lon) {
+  map.flyTo([lat, lon], 14, { duration: 1.2 });
+}
+
+// ── Episode replay ────────────────────────────────────────────────────────
+async function toggleReplay() {
+  const btn = document.getElementById('replay-btn');
+  const bar = document.getElementById('replay-bar');
+  const isActive = btn.classList.toggle('active');
+  bar.classList.toggle('visible', isActive);
+  if (isActive && !replayData) await loadReplayData();
+}
+
+async function loadReplayData() {
+  try {
+    const r = await fetch(`frontend/data/episode_${activeCity}.json`);
+    if (!r.ok) throw new Error('No replay data');
+    replayData = await r.json();
+    const slider = document.getElementById('replay-slider');
+    slider.max   = replayData.length - 1;
+    slider.value = 0;
+    onReplaySlide(0);
+  } catch (e) {
+    document.getElementById('replay-date').textContent = 'No episode data yet';
+  }
+}
+
+function onReplaySlide(idx) {
+  replayIdx = parseInt(idx);
+  if (!replayData || !replayData[replayIdx]) return;
+  const frame = replayData[replayIdx];
+  document.getElementById('replay-date').textContent = frame.date;
+  const pts = frame.grid.map(c => [c.lat, c.lon, c.no2 / 80]);
+  heatLayer.setLatLngs(pts);
+}
+
+let playing = false;
+function playReplay() {
+  if (playing) { clearInterval(replayTimer); playing = false;
+    document.getElementById('replay-play').textContent = '▶ Play'; return; }
+  playing = true;
+  document.getElementById('replay-play').textContent = '⏸ Pause';
+  replayTimer = setInterval(() => {
+    const slider = document.getElementById('replay-slider');
+    replayIdx = (replayIdx + 1) % (replayData ? replayData.length : 1);
+    slider.value = replayIdx;
+    onReplaySlide(replayIdx);
+    if (replayIdx === 0) { clearInterval(replayTimer); playing = false;
+      document.getElementById('replay-play').textContent = '▶ Play'; }
+  }, 800);
+}
+
+// ── Utility ───────────────────────────────────────────────────────────────
+function setText(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+function setFlag(id, active, activeClass) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.className = 'flag ' + (active ? activeClass : 'flag-off');
+}
+
+function dotColor(id, state) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.className = `comp-dot comp-${state === 'breach' ? 'breach' : state === 'warn' ? 'warn' : 'ok'}`;
+}
+
+// ── Polling ───────────────────────────────────────────────────────────────
+setInterval(() => {
+  fetchForecast(activeHorizon);
+  fetchAlerts();
+}, POLL_MS);
+
+// ── Boot ──────────────────────────────────────────────────────────────────
+(async () => {
+  await fetchAll();
+  await fetchBuffers();
+})();
+</script>
+</body>
+</html>
