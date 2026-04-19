@@ -1,0 +1,147 @@
+{
+  "city": "monastir",
+  "city_label": "Monastir",
+  "recommendations": [
+    {
+      "lat": 35.76939,
+      "lon": 10.81962,
+      "buffer_score": 72,
+      "buffer_type": "industrial_perimeter",
+      "land_use": "grass",
+      "recommended_species": [
+        "Pinus halepensis",
+        "Eucalyptus globulus"
+      ],
+      "buffer_width_m": "20\u201350",
+      "estimated_no2_reduction_pct": "25\u201340",
+      "area_needed_m2": 5000
+    },
+    {
+      "lat": 35.77895,
+      "lon": 10.83056,
+      "buffer_score": 71,
+      "buffer_type": "residential_corridor",
+      "land_use": "scrub",
+      "recommended_species": [
+        "Ficus nitida",
+        "Mixed shrubs"
+      ],
+      "buffer_width_m": "10\u201320",
+      "estimated_no2_reduction_pct": "10\u201318",
+      "area_needed_m2": 2000
+    },
+    {
+      "lat": 35.78548,
+      "lon": 10.83398,
+      "buffer_score": 69,
+      "buffer_type": "residential_corridor",
+      "land_use": "scrub",
+      "recommended_species": [
+        "Ficus nitida",
+        "Mixed shrubs"
+      ],
+      "buffer_width_m": "10\u201320",
+      "estimated_no2_reduction_pct": "10\u201318",
+      "area_needed_m2": 2000
+    },
+    {
+      "lat": 35.78681,
+      "lon": 10.83402,
+      "buffer_score": 69,
+      "buffer_type": "residential_corridor",
+      "land_use": "scrub",
+      "recommended_species": [
+        "Ficus nitida",
+        "Mixed shrubs"
+      ],
+      "buffer_width_m": "10\u201320",
+      "estimated_no2_reduction_pct": "10\u201318",
+      "area_needed_m2": 2000
+    },
+    {
+      "lat": 35.77243,
+      "lon": 10.82616,
+      "buffer_score": 69,
+      "buffer_type": "road_buffer",
+      "land_use": "grass",
+      "recommended_species": [
+        "Nerium oleander",
+        "Populus nigra"
+      ],
+      "buffer_width_m": "5\u201310",
+      "estimated_no2_reduction_pct": "15\u201325",
+      "area_needed_m2": 2000
+    },
+    {
+      "lat": 35.77283,
+      "lon": 10.82526,
+      "buffer_score": 69,
+      "buffer_type": "road_buffer",
+      "land_use": "grass",
+      "recommended_species": [
+        "Nerium oleander",
+        "Populus nigra"
+      ],
+      "buffer_width_m": "5\u201310",
+      "estimated_no2_reduction_pct": "15\u201325",
+      "area_needed_m2": 2000
+    },
+    {
+      "lat": 35.77933,
+      "lon": 10.8309,
+      "buffer_score": 68,
+      "buffer_type": "residential_corridor",
+      "land_use": "grass",
+      "recommended_species": [
+        "Ficus nitida",
+        "Mixed shrubs"
+      ],
+      "buffer_width_m": "10\u201320",
+      "estimated_no2_reduction_pct": "10\u201318",
+      "area_needed_m2": 2000
+    },
+    {
+      "lat": 35.77909,
+      "lon": 10.83093,
+      "buffer_score": 68,
+      "buffer_type": "residential_corridor",
+      "land_use": "grass",
+      "recommended_species": [
+        "Ficus nitida",
+        "Mixed shrubs"
+      ],
+      "buffer_width_m": "10\u201320",
+      "estimated_no2_reduction_pct": "10\u201318",
+      "area_needed_m2": 2000
+    },
+    {
+      "lat": 35.77908,
+      "lon": 10.83076,
+      "buffer_score": 68,
+      "buffer_type": "residential_corridor",
+      "land_use": "grass",
+      "recommended_species": [
+        "Ficus nitida",
+        "Mixed shrubs"
+      ],
+      "buffer_width_m": "10\u201320",
+      "estimated_no2_reduction_pct": "10\u201318",
+      "area_needed_m2": 2000
+    },
+    {
+      "lat": 35.77934,
+      "lon": 10.83075,
+      "buffer_score": 68,
+      "buffer_type": "residential_corridor",
+      "land_use": "grass",
+      "recommended_species": [
+        "Ficus nitida",
+        "Mixed shrubs"
+      ],
+      "buffer_width_m": "10\u201320",
+      "estimated_no2_reduction_pct": "10\u201318",
+      "area_needed_m2": 2000
+    }
+  ],
+  "total_candidates": 77
+}

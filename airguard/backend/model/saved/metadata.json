@@ -1,0 +1,71 @@
+{
+  "feature_cols": [
+    "cams_no2_daily",
+    "no2_lag1",
+    "no2_lag2",
+    "no2_lag3",
+    "no2_lag7",
+    "no2_ma7",
+    "blh_mean",
+    "blh_min",
+    "wind_speed_mean",
+    "wind_speed_min",
+    "temp_2m_mean",
+    "precip_sum",
+    "inversion_flag",
+    "stagnation_flag",
+    "sirocco_flag",
+    "rain_flag",
+    "doy_sin",
+    "doy_cos"
+  ],
+  "horizons": {
+    "24h": 1,
+    "48h": 2,
+    "72h": 3
+  },
+  "validation_metrics": {
+    "monastir": {
+      "24h": {
+        "mae": 0.691,
+        "rmse": 0.954,
+        "uncertainty_sigma": 0.988,
+        "val_days": 472
+      },
+      "48h": {
+        "mae": 0.8,
+        "rmse": 1.125,
+        "uncertainty_sigma": 1.186,
+        "val_days": 471
+      },
+      "72h": {
+        "mae": 0.826,
+        "rmse": 1.15,
+        "uncertainty_sigma": 1.2,
+        "val_days": 470
+      }
+    },
+    "mahdia": {
+      "24h": {
+        "mae": 0.452,
+        "rmse": 0.66,
+        "uncertainty_sigma": 0.722,
+        "val_days": 472
+      },
+      "48h": {
+        "mae": 0.529,
+        "rmse": 0.744,
+        "uncertainty_sigma": 0.784,
+        "val_days": 471
+      },
+      "72h": {
+        "mae": 0.565,
+        "rmse": 0.782,
+        "uncertainty_sigma": 0.811,
+        "val_days": 470
+      }
+    }
+  },
+  "model_type": "XGBoostRegressor (CAMS bias corrector)",
+  "trained_on": "ERA5 + CAMS via Open-Meteo, 2021\u20132024"
+}

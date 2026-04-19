@@ -1,0 +1,147 @@
+{
+  "city": "mahdia",
+  "city_label": "Mahdia",
+  "recommendations": [
+    {
+      "lat": 35.50518,
+      "lon": 11.06246,
+      "buffer_score": 95,
+      "buffer_type": "industrial_perimeter",
+      "land_use": "grass",
+      "recommended_species": [
+        "Pinus halepensis",
+        "Eucalyptus globulus"
+      ],
+      "buffer_width_m": "20\u201350",
+      "estimated_no2_reduction_pct": "25\u201340",
+      "area_needed_m2": 5000
+    },
+    {
+      "lat": 35.50677,
+      "lon": 11.06237,
+      "buffer_score": 93,
+      "buffer_type": "industrial_perimeter",
+      "land_use": "scrub",
+      "recommended_species": [
+        "Pinus halepensis",
+        "Eucalyptus globulus"
+      ],
+      "buffer_width_m": "20\u201350",
+      "estimated_no2_reduction_pct": "25\u201340",
+      "area_needed_m2": 5000
+    },
+    {
+      "lat": 35.50601,
+      "lon": 11.06206,
+      "buffer_score": 87,
+      "buffer_type": "industrial_perimeter",
+      "land_use": "grass",
+      "recommended_species": [
+        "Pinus halepensis",
+        "Eucalyptus globulus"
+      ],
+      "buffer_width_m": "20\u201350",
+      "estimated_no2_reduction_pct": "25\u201340",
+      "area_needed_m2": 5000
+    },
+    {
+      "lat": 35.50446,
+      "lon": 11.072,
+      "buffer_score": 81,
+      "buffer_type": "industrial_perimeter",
+      "land_use": "grass",
+      "recommended_species": [
+        "Pinus halepensis",
+        "Eucalyptus globulus"
+      ],
+      "buffer_width_m": "20\u201350",
+      "estimated_no2_reduction_pct": "25\u201340",
+      "area_needed_m2": 5000
+    },
+    {
+      "lat": 35.50411,
+      "lon": 11.07237,
+      "buffer_score": 80,
+      "buffer_type": "industrial_perimeter",
+      "land_use": "grass",
+      "recommended_species": [
+        "Pinus halepensis",
+        "Eucalyptus globulus"
+      ],
+      "buffer_width_m": "20\u201350",
+      "estimated_no2_reduction_pct": "25\u201340",
+      "area_needed_m2": 5000
+    },
+    {
+      "lat": 35.50391,
+      "lon": 11.06783,
+      "buffer_score": 80,
+      "buffer_type": "industrial_perimeter",
+      "land_use": "grass",
+      "recommended_species": [
+        "Pinus halepensis",
+        "Eucalyptus globulus"
+      ],
+      "buffer_width_m": "20\u201350",
+      "estimated_no2_reduction_pct": "25\u201340",
+      "area_needed_m2": 5000
+    },
+    {
+      "lat": 35.50422,
+      "lon": 11.07151,
+      "buffer_score": 80,
+      "buffer_type": "industrial_perimeter",
+      "land_use": "grass",
+      "recommended_species": [
+        "Pinus halepensis",
+        "Eucalyptus globulus"
+      ],
+      "buffer_width_m": "20\u201350",
+      "estimated_no2_reduction_pct": "25\u201340",
+      "area_needed_m2": 5000
+    },
+    {
+      "lat": 35.50383,
+      "lon": 11.07253,
+      "buffer_score": 79,
+      "buffer_type": "industrial_perimeter",
+      "land_use": "grass",
+      "recommended_species": [
+        "Pinus halepensis",
+        "Eucalyptus globulus"
+      ],
+      "buffer_width_m": "20\u201350",
+      "estimated_no2_reduction_pct": "25\u201340",
+      "area_needed_m2": 5000
+    },
+    {
+      "lat": 35.50365,
+      "lon": 11.06773,
+      "buffer_score": 78,
+      "buffer_type": "industrial_perimeter",
+      "land_use": "grass",
+      "recommended_species": [
+        "Pinus halepensis",
+        "Eucalyptus globulus"
+      ],
+      "buffer_width_m": "20\u201350",
+      "estimated_no2_reduction_pct": "25\u201340",
+      "area_needed_m2": 5000
+    },
+    {
+      "lat": 35.50303,
+      "lon": 11.06795,
+      "buffer_score": 76,
+      "buffer_type": "industrial_perimeter",
+      "land_use": "grass",
+      "recommended_species": [
+        "Pinus halepensis",
+        "Eucalyptus globulus"
+      ],
+      "buffer_width_m": "20\u201350",
+      "estimated_no2_reduction_pct": "25\u201340",
+      "area_needed_m2": 5000
+    }
+  ],
+  "total_candidates": 74
+}

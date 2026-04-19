@@ -193,9 +193,9 @@ def _build_feature_row(city_key: str, horizon_h: int) -> dict | None:
             "sea_breeze": False,  # approximated: requires coastal cell logic
         },
         "weather_summary": {
-            "wind_speed_ms":           round(wx_today["wind_speed_mean"], 1),
-            "wind_direction_deg":      round(wx_today["wind_dir_mean"], 0),
-            "boundary_layer_height_m": round(wx_today["blh_mean"], 0),
+            "wind_speed_ms":           float(round(wx_today["wind_speed_mean"], 1)),
+            "wind_direction_deg":      float(round(wx_today["wind_dir_mean"], 0)),
+            "boundary_layer_height_m": float(round(wx_today["blh_mean"], 0)),
             "inversion_detected":      bool(inversion),
             "sirocco_active":          bool(sirocco),
         },
