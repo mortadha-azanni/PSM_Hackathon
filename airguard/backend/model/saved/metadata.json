@@ -27,41 +27,41 @@
   "validation_metrics": {
     "monastir": {
       "24h": {
-        "mae": 0.691,
-        "rmse": 0.954,
-        "uncertainty_sigma": 0.988,
+        "mae": 15.062,
+        "rmse": 20.77,
+        "uncertainty_sigma": 21.453,
         "val_days": 472
       },
       "48h": {
-        "mae": 0.8,
-        "rmse": 1.125,
-        "uncertainty_sigma": 1.186,
+        "mae": 17.524,
+        "rmse": 24.577,
+        "uncertainty_sigma": 25.847,
         "val_days": 471
       },
       "72h": {
-        "mae": 0.826,
-        "rmse": 1.15,
-        "uncertainty_sigma": 1.2,
+        "mae": 17.955,
+        "rmse": 24.898,
+        "uncertainty_sigma": 25.875,
         "val_days": 470
       }
     },
     "mahdia": {
       "24h": {
-        "mae": 0.452,
-        "rmse": 0.66,
-        "uncertainty_sigma": 0.722,
+        "mae": 11.45,
+        "rmse": 15.736,
+        "uncertainty_sigma": 16.191,
         "val_days": 472
       },
       "48h": {
-        "mae": 0.529,
-        "rmse": 0.744,
-        "uncertainty_sigma": 0.784,
+        "mae": 13.462,
+        "rmse": 17.327,
+        "uncertainty_sigma": 16.364,
         "val_days": 471
       },
       "72h": {
-        "mae": 0.565,
-        "rmse": 0.782,
-        "uncertainty_sigma": 0.811,
+        "mae": 13.651,
+        "rmse": 17.576,
+        "uncertainty_sigma": 16.605,
         "val_days": 470
       }
     }

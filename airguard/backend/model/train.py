@@ -26,7 +26,7 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.metrics import mean_absolute_error, mean_squared_error
+from sklearn.metrics import mean_absolute_error, root_mean_squared_error
 from xgboost import XGBRegressor
 from config.cities import CITIES
 
@@ -116,7 +116,7 @@ def train_city(city_key: str) -> dict:
 
         y_pred = model.predict(X_val_s)
         mae  = mean_absolute_error(y_val, y_pred)
-        rmse = mean_squared_error(y_val, y_pred, squared=False)
+        rmse = root_mean_squared_error(y_val, y_pred)
         # Uncertainty estimate: 1.5 × std of validation residuals
         residuals = np.abs(y_val.values - y_pred)
         uncertainty = float(1.5 * np.std(residuals))

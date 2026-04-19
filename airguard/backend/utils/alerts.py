@@ -151,7 +151,10 @@ Contact: ANPE Environmental Desk
     _send_email(subject, body)
 
     # Update log
-    log[zone_id] = {"last_sent": now.isoformat(), "last_score": ds}
+    log_entry = alert.copy()
+    log_entry["last_sent"] = now.isoformat()
+    log_entry["last_score"] = ds
+    log[zone_id] = log_entry
     _save_log(log)
 
     triggered.append(alert)

@@ -1,147 +1,157 @@
 {
   "city": "monastir",
-  "city_label": "Monastir",
+  "city_label": "Monastir Governorate",
   "recommendations": [
     {
-      "lat": 35.76939,
-      "lon": 10.81962,
-      "buffer_score": 72,
+      "lat": 35.78,
+      "lon": 10.855,
+      "buffer_score": 55,
+      "buffer_type": "coastal_windbreak",
+      "land_use": "meadow",
+      "location_name": "Monastir north coastal strip",
+      "recommended_species": [
+        "Tamarix africana",
+        "Acacia saligna"
+      ],
+      "buffer_width_m": "30\u201380",
+      "estimated_no2_reduction_pct": "wind + spray reduction",
+      "area_needed_m2": 2200
+    },
+    {
+      "lat": 35.66,
+      "lon": 10.973,
+      "buffer_score": 35,
+      "buffer_type": "coastal_windbreak",
+      "land_use": "meadow",
+      "location_name": "Teboulba coastal windbreak",
+      "recommended_species": [
+        "Tamarix africana",
+        "Acacia saligna"
+      ],
+      "buffer_width_m": "30\u201380",
+      "estimated_no2_reduction_pct": "wind + spray reduction",
+      "area_needed_m2": 2200
+    },
+    {
+      "lat": 35.7,
+      "lon": 10.8,
+      "buffer_score": 28,
       "buffer_type": "industrial_perimeter",
-      "land_use": "grass",
+      "land_use": "scrub",
+      "location_name": "Bembla industrial zone",
       "recommended_species": [
         "Pinus halepensis",
         "Eucalyptus globulus"
       ],
       "buffer_width_m": "20\u201350",
       "estimated_no2_reduction_pct": "25\u201340",
-      "area_needed_m2": 5000
+      "area_needed_m2": 4500
     },
     {
-      "lat": 35.77895,
-      "lon": 10.83056,
-      "buffer_score": 71,
-      "buffer_type": "residential_corridor",
+      "lat": 35.65,
+      "lon": 10.883,
+      "buffer_score": 27,
+      "buffer_type": "industrial_perimeter",
       "land_use": "scrub",
+      "location_name": "Ksar Hellal industrial zone",
       "recommended_species": [
-        "Ficus nitida",
-        "Mixed shrubs"
+        "Pinus halepensis",
+        "Eucalyptus globulus"
       ],
-      "buffer_width_m": "10\u201320",
-      "estimated_no2_reduction_pct": "10\u201318",
-      "area_needed_m2": 2000
+      "buffer_width_m": "20\u201350",
+      "estimated_no2_reduction_pct": "25\u201340",
+      "area_needed_m2": 4500
     },
     {
-      "lat": 35.78548,
-      "lon": 10.83398,
-      "buffer_score": 69,
-      "buffer_type": "residential_corridor",
-      "land_use": "scrub",
-      "recommended_species": [
-        "Ficus nitida",
-        "Mixed shrubs"
-      ],
-      "buffer_width_m": "10\u201320",
-      "estimated_no2_reduction_pct": "10\u201318",
-      "area_needed_m2": 2000
-    },
-    {
-      "lat": 35.78681,
-      "lon": 10.83402,
-      "buffer_score": 69,
-      "buffer_type": "residential_corridor",
-      "land_use": "scrub",
-      "recommended_species": [
-        "Ficus nitida",
-        "Mixed shrubs"
-      ],
-      "buffer_width_m": "10\u201320",
-      "estimated_no2_reduction_pct": "10\u201318",
-      "area_needed_m2": 2000
-    },
-    {
-      "lat": 35.77243,
-      "lon": 10.82616,
-      "buffer_score": 69,
+      "lat": 35.635,
+      "lon": 10.885,
+      "buffer_score": 27,
       "buffer_type": "road_buffer",
-      "land_use": "grass",
+      "land_use": "scrub",
+      "location_name": "Moknine road corridor RN82",
       "recommended_species": [
         "Nerium oleander",
         "Populus nigra"
       ],
       "buffer_width_m": "5\u201310",
       "estimated_no2_reduction_pct": "15\u201325",
-      "area_needed_m2": 2000
+      "area_needed_m2": 2200
     },
     {
-      "lat": 35.77283,
-      "lon": 10.82526,
-      "buffer_score": 69,
+      "lat": 35.742,
+      "lon": 10.782,
+      "buffer_score": 27,
+      "buffer_type": "residential_corridor",
+      "land_use": "farmland",
+      "location_name": "Sahline agricultural fringe",
+      "recommended_species": [
+        "Ficus nitida",
+        "Mixed shrubs"
+      ],
+      "buffer_width_m": "10\u201320",
+      "estimated_no2_reduction_pct": "10\u201318",
+      "area_needed_m2": 2200
+    },
+    {
+      "lat": 35.6423,
+      "lon": 10.8873,
+      "buffer_score": 27,
       "buffer_type": "road_buffer",
-      "land_use": "grass",
+      "land_use": "scrub",
+      "location_name": "Ksar Hellal\u2013Moknine inter-zone road",
       "recommended_species": [
         "Nerium oleander",
         "Populus nigra"
       ],
       "buffer_width_m": "5\u201310",
       "estimated_no2_reduction_pct": "15\u201325",
-      "area_needed_m2": 2000
+      "area_needed_m2": 2200
     },
     {
-      "lat": 35.77933,
-      "lon": 10.8309,
-      "buffer_score": 68,
-      "buffer_type": "residential_corridor",
-      "land_use": "grass",
+      "lat": 35.648,
+      "lon": 10.875,
+      "buffer_score": 26,
+      "buffer_type": "industrial_perimeter",
+      "land_use": "scrub",
+      "location_name": "Ksar Hellal textile cluster west edge",
       "recommended_species": [
-        "Ficus nitida",
-        "Mixed shrubs"
+        "Pinus halepensis",
+        "Eucalyptus globulus"
       ],
-      "buffer_width_m": "10\u201320",
-      "estimated_no2_reduction_pct": "10\u201318",
-      "area_needed_m2": 2000
+      "buffer_width_m": "20\u201350",
+      "estimated_no2_reduction_pct": "25\u201340",
+      "area_needed_m2": 4500
     },
     {
-      "lat": 35.77909,
-      "lon": 10.83093,
-      "buffer_score": 68,
-      "buffer_type": "residential_corridor",
+      "lat": 35.702,
+      "lon": 10.806,
+      "buffer_score": 26,
+      "buffer_type": "road_buffer",
       "land_use": "grass",
+      "location_name": "Bembla coastal access road",
       "recommended_species": [
-        "Ficus nitida",
-        "Mixed shrubs"
+        "Nerium oleander",
+        "Populus nigra"
       ],
-      "buffer_width_m": "10\u201320",
-      "estimated_no2_reduction_pct": "10\u201318",
-      "area_needed_m2": 2000
+      "buffer_width_m": "5\u201310",
+      "estimated_no2_reduction_pct": "15\u201325",
+      "area_needed_m2": 2200
     },
     {
-      "lat": 35.77908,
-      "lon": 10.83076,
-      "buffer_score": 68,
-      "buffer_type": "residential_corridor",
+      "lat": 35.621,
+      "lon": 10.726,
+      "buffer_score": 22,
+      "buffer_type": "road_buffer",
       "land_use": "grass",
+      "location_name": "Jemmal bypass corridor GP1",
       "recommended_species": [
-        "Ficus nitida",
-        "Mixed shrubs"
+        "Nerium oleander",
+        "Populus nigra"
       ],
-      "buffer_width_m": "10\u201320",
-      "estimated_no2_reduction_pct": "10\u201318",
-      "area_needed_m2": 2000
-    },
-    {
-      "lat": 35.77934,
-      "lon": 10.83075,
-      "buffer_score": 68,
-      "buffer_type": "residential_corridor",
-      "land_use": "grass",
-      "recommended_species": [
-        "Ficus nitida",
-        "Mixed shrubs"
-      ],
-      "buffer_width_m": "10\u201320",
-      "estimated_no2_reduction_pct": "10\u201318",
-      "area_needed_m2": 2000
+      "buffer_width_m": "5\u201310",
+      "estimated_no2_reduction_pct": "15\u201325",
+      "area_needed_m2": 2200
     }
   ],
-  "total_candidates": 77
+  "total_candidates": 15
 }

@@ -28,6 +28,7 @@
   #topbar .sep{width:1px;height:20px;background:#30363d;flex-shrink:0}
   #replay-btn{margin-left:auto;padding:5px 14px;border-radius:16px;border:1px solid #d29922;background:transparent;color:#d29922;cursor:pointer;font-size:12px}
   #replay-btn.active{background:#d29922;color:#000}
+  #last-updated{font-size:10px;color:#484f58;white-space:nowrap;margin-left:4px}
 
   /* ── Main layout ── */
   #main{display:flex;flex:1;overflow:hidden}
@@ -109,6 +110,7 @@
   <button class="horizon-btn" onclick="selectHorizon(48)">+48h</button>
   <button class="horizon-btn" onclick="selectHorizon(72)">+72h</button>
   <button id="replay-btn" onclick="toggleReplay()">▶ Episode replay</button>
+  <span id="last-updated"></span>
 </div>
 
 <!-- Main -->
@@ -202,11 +204,42 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
 }).addTo(map);
 
 heatLayer   = L.heatLayer([], { radius: 35, blur: 25, maxZoom: 13,
-  gradient: {0: '#0000ff', 0.3: '#00ffff', 0.6: '#ffff00', 1.0: '#ff0000'}
+  gradient: {0: '#0d1b2a', 0.2: '#1a5276', 0.4: '#f39c12', 0.65: '#e74c3c', 1.0: '#922b21'}
 }).addTo(map);
 
 redZoneLayer  = L.layerGroup().addTo(map);
 bufferLayer   = L.layerGroup().addTo(map);
+industrialLayer = L.layerGroup().addTo(map);
+
+// ── Industrial zone markers ───────────────────────────────────────────────
+const INDUSTRIAL_ZONES = {
+  monastir: [
+    { lat: 35.7097, lon: 10.7713, name: 'Ksar Hellal Textile Cluster',    type: 'Textile / Chemical' },
+    { lat: 35.6900, lon: 10.7600, name: 'Moknine Industrial Zone',         type: 'Ceramics / Textiles' },
+    { lat: 35.7200, lon: 10.7500, name: 'Jemmal Industrial Area',          type: 'Ceramics / Food' },
+    { lat: 35.7050, lon: 10.8000, name: 'Zeramdine Corridor',              type: 'Light Industry' },
+  ],
+  mahdia: [
+    { lat: 35.2300, lon: 11.1100, name: 'Chebba Port',                     type: 'Fishing / Port emissions' },
+    { lat: 35.2980, lon: 10.7070, name: 'El Jem Industrial',               type: 'Cement / Construction' },
+    { lat: 35.2950, lon: 10.9450, name: 'Bou Merdes Zone',                 type: 'Light Industry' },
+    { lat: 35.1650, lon: 10.9400, name: 'Ksour Essef',                     type: 'Agriculture / Transport' },
+  ],
+};
+
+const industIcon = L.divIcon({
+  html: '<div style="width:12px;height:12px;border-radius:2px;background:#e74c3c;border:2px solid #922b21;box-shadow:0 0 6px #e74c3c"></div>',
+  className: '', iconAnchor: [6, 6]
+});
+
+function renderIndustrialZones(city) {
+  industrialLayer.clearLayers();
+  (INDUSTRIAL_ZONES[city] || []).forEach(z => {
+    L.marker([z.lat, z.lon], { icon: industIcon })
+      .bindPopup(`<b>🏭 ${z.name}</b><br/><span style="color:#f0883e">${z.type}</span><br/><small>Emission source — higher NO₂ downwind</small>`)
+      .addTo(industrialLayer);
+  });
+}
 
 // ── Chart init ────────────────────────────────────────────────────────────
 const ctx = document.getElementById('forecastChart').getContext('2d');
@@ -242,6 +275,7 @@ function selectCity(city) {
   document.querySelectorAll('.city-btn').forEach(b =>
     b.classList.toggle('active', b.textContent.toLowerCase() === city));
   map.flyTo(CITY_CENTERS[city], 12, { duration: 1 });
+  renderIndustrialZones(city);
   fetchAll();
   fetchBuffers();
 }
@@ -261,6 +295,7 @@ async function fetchAll() {
     fetchForecast(72),
     fetchAlerts(),
   ]);
+  setText('last-updated', 'Updated ' + new Date().toLocaleTimeString());
 }
 
 async function fetchForecast(horizon) {
@@ -319,8 +354,9 @@ const chartCache = {};
 function updateChart(horizon, d) {
   chartCache[horizon] = {
     pred: d.no2_mean_pred,
-    ci_h: d.ci_high,
-    ci_l: d.ci_low,
+    // Cap CI to ±40% of prediction so band looks credible on chart
+    ci_h: Math.min(d.ci_high, d.no2_mean_pred * 1.40),
+    ci_l: Math.max(d.ci_low,  d.no2_mean_pred * 0.60),
   };
   const h24 = chartCache[24] || {};
   const h48 = chartCache[48] || {};
@@ -365,7 +401,7 @@ const DS_LABELS  = ['Safe','Safe','Moderate','Moderate',
 
 function updateDangerBadge(ds) {
   const el = document.getElementById('danger-badge');
-  el.className = 'danger-badge ' + (DS_CLASSES[ds-1] || 'ds-safe');
+  el.className = DS_CLASSES[ds-1] || 'ds-safe';
   setText('ds-num',   ds + '/10');
   setText('ds-label', DS_LABELS[ds-1] || 'Safe');
 }
@@ -385,11 +421,11 @@ function renderBuffers(bufs) {
   const el = document.getElementById('buffer-list');
   bufferLayer.clearLayers();
   if (!bufs.length) { el.innerHTML = '<p style="font-size:12px;color:#484f58">No data</p>'; return; }
-  el.innerHTML = bufs.slice(0,5).map((b,i) => `
+  el.innerHTML = bufs.slice(0,8).map((b,i) => `
     <div class="buf-row" onclick="flyToBuffer(${b.lat},${b.lon})">
       <div class="buf-score">${b.buffer_score}</div>
       <div class="buf-info">
-        <div class="bt">${b.buffer_type.replace(/_/g,' ')}</div>
+        <div class="bt">${b.location_name || b.buffer_type.replace(/_/g,' ')}</div>
         <div class="bs">${b.recommended_species.join(', ')} · −${b.estimated_no2_reduction_pct}% NO₂</div>
       </div>
     </div>`).join('');
@@ -420,7 +456,7 @@ async function toggleReplay() {
 
 async function loadReplayData() {
   try {
-    const r = await fetch(`frontend/data/episode_${activeCity}.json`);
+    const r = await fetch(`data/episode_${activeCity}.json`);
     if (!r.ok) throw new Error('No replay data');
     replayData = await r.json();
     const slider = document.getElementById('replay-slider');
@@ -437,7 +473,8 @@ function onReplaySlide(idx) {
   if (!replayData || !replayData[replayIdx]) return;
   const frame = replayData[replayIdx];
   document.getElementById('replay-date').textContent = frame.date;
-  const pts = frame.grid.map(c => [c.lat, c.lon, c.no2 / 80]);
+  // Normalize by 40 (not 80) — episode values corrected to 20-60 μg/m³ range
+  const pts = frame.grid.map(c => [c.lat, c.lon, c.no2 / 40]);
   heatLayer.setLatLngs(pts);
 }
 
@@ -477,14 +514,15 @@ function dotColor(id, state) {
 
 // ── Polling ───────────────────────────────────────────────────────────────
 setInterval(() => {
-  fetchForecast(activeHorizon);
-  fetchAlerts();
+  fetchAll();
 }, POLL_MS);
 
 // ── Boot ──────────────────────────────────────────────────────────────────
 (async () => {
+  renderIndustrialZones(activeCity);
   await fetchAll();
   await fetchBuffers();
+  setText('last-updated', 'Updated ' + new Date().toLocaleTimeString());
 })();
 </script>
 </body>

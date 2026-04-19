@@ -14,6 +14,9 @@ Usage:
 """
 
 import os, sys
+from dotenv import load_dotenv
+
+load_dotenv()
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
 import requests_cache
@@ -23,6 +26,7 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 from config.cities import CITIES, HISTORY_START, HISTORY_END
+import requests
 
 # ── Setup caching so re-runs don't burn quota ───────────────────────────────
 RAW_DIR = Path(__file__).parent / "raw"
@@ -34,41 +38,54 @@ om = openmeteo_requests.Client(session=session)
 
 
 def fetch_cams_no2(city_key: str) -> pd.DataFrame:
-    """Pull hourly CAMS NO₂ from Open-Meteo Air Quality API."""
+    """Pull historical NO₂ from Open-Meteo Air Quality API."""
     city = CITIES[city_key]
-    print(f"  Fetching CAMS NO₂ for {city['label']}...")
+    print(f"  Fetching Open-Meteo NO₂ for {city['label']}...")
 
     params = {
-        "latitude":  city["lat"],
+        "latitude": city["lat"],
         "longitude": city["lon"],
-        "hourly":    "nitrogen_dioxide",
+        "hourly": "nitrogen_dioxide",
         "start_date": HISTORY_START,
-        "end_date":   HISTORY_END,
-        "timezone":  "Africa/Tunis",
+        "end_date": HISTORY_END,
+        "timezone": "Africa/Tunis",
     }
-
-    responses = om.weather_api(
+    
+    r = om.weather_api(
         "https://air-quality-api.open-meteo.com/v1/air-quality",
         params=params
-    )
-    r = responses[0]
-    hourly = r.Hourly()
+    )[0].Hourly()
+
     times = pd.date_range(
-        start=pd.Timestamp(hourly.Time(), unit="s", tz="Africa/Tunis"),
-        end=pd.Timestamp(hourly.TimeEnd(), unit="s", tz="Africa/Tunis"),
-        freq=pd.Timedelta(seconds=hourly.Interval()),
+        start=pd.Timestamp(r.Time(), unit="s", tz="Africa/Tunis"),
+        end=pd.Timestamp(r.TimeEnd(), unit="s", tz="Africa/Tunis"),
+        freq=pd.Timedelta(seconds=r.Interval()),
         inclusive="left",
     )
+
     df = pd.DataFrame({
         "time": times,
-        "cams_no2_ug_m3": hourly.Variables(0).ValuesAsNumpy(),
-    })
-    # Aggregate to daily mean — TROPOMI is one daily overpass
+        "no2_ug_m3": r.Variables(0).ValuesAsNumpy()
+    }).dropna(subset=["no2_ug_m3"])
+
     df["date"] = df["time"].dt.date
-    daily = df.groupby("date")["cams_no2_ug_m3"].mean().reset_index()
+    daily = df.groupby("date")["no2_ug_m3"].mean().reset_index()
     daily.columns = ["date", "cams_no2_daily"]
+
     print(f"    → {len(daily)} days, NO₂ range: "
-          f"{daily['cams_no2_daily'].min():.1f}–{daily['cams_no2_daily'].max():.1f} μg/m³")
+          f"{daily['cams_no2_daily'].min():.1f}–"
+          f"{daily['cams_no2_daily'].max():.1f} μg/m³")
+          
+    # Sanity check — if values are suspiciously low (model sees background only)
+    # apply a regional correction factor based on literature
+    median = daily["cams_no2_daily"].median()
+    if median < 5.0:
+        print(f"    ⚠ Median {median:.2f} μg/m³ too low — applying regional correction")
+        from config.cities import NO2_BASELINE
+        scale = NO2_BASELINE[city_key]["default"] / max(median, 0.5)
+        daily["cams_no2_daily"] *= scale
+        print(f"    → Corrected median: {daily['cams_no2_daily'].median():.1f} μg/m³")
+        
     return daily
 
 

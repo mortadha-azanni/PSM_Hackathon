@@ -29,6 +29,8 @@ _cache   = requests_cache.CachedSession(
 _session = retry(_cache, retries=3, backoff_factor=0.2)
 _om      = openmeteo_requests.Client(session=_session)
 
+from config.cities import NO2_BASELINE
+
 # Winter stagnation window — known high-pollution period for the Sahel coast
 EPISODE_START = "2023-12-01"
 EPISODE_END   = "2024-01-31"
@@ -60,6 +62,14 @@ def build_episode(city_key: str):
     df = pd.DataFrame({"time": times, "no2": r.Variables(0).ValuesAsNumpy()})
     df["date"] = df["time"].dt.date
     daily = df.groupby("date")["no2"].mean().reset_index()
+
+    # Apply same regional scale correction as fetch.py
+    # Raw CAMS background is 3-7 μg/m³; real urban/industrial values are 20-60
+    median = daily["no2"].median()
+    if median < 5.0:
+        scale = NO2_BASELINE[city_key]["default"] / max(median, 0.5)
+        daily["no2"] *= scale
+        print(f"  Applied correction ×{scale:.1f} (raw median {median:.2f} → {daily['no2'].median():.1f} μg/m³)")
 
     # Build frames — each frame has a small grid around the city center
     rng = np.random.default_rng(seed=99)

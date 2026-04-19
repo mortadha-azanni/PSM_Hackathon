@@ -24,6 +24,16 @@ if [ ! -f .env ]; then
   echo "   Fill in SMTP_USER + SMTP_PASS for email alerts, then re-run."
 fi
 
+# ── Virtualenv ────────────────────────────────────────────────────────────────
+if [ -d "venv" ]; then
+  echo "Activating virtualenv..."
+  source venv/bin/activate
+else
+  echo "Creating virtualenv..."
+  python3 -m venv venv
+  source venv/bin/activate
+fi
+
 # ── Python deps ───────────────────────────────────────────────────────────────
 echo ""
 echo "Installing dependencies..."
